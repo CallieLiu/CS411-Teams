@@ -11,11 +11,27 @@ configure_logger(logger)
 
 
 class BattleModel:
+    """
+    A class to manage a battle of meals.
+
+    Attributes:
+        combatants (List[Meal]): The list of meals in combatants/
+
+    """
 
     def __init__(self):
+        """
+        Intializes the Battle Model with an empty meal list.
+        """
         self.combatants: List[Meal] = []
 
     def battle(self) -> str:
+        """"
+        Returns a winner meal given two meals.
+
+        Raises:
+            ValueError: If there are not enough combatants to start a battle (less than 2 combatants).
+        """
         logger.info("Two meals enter, one meal leaves!")
 
         if len(self.combatants) < 2:
