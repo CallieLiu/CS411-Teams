@@ -15,7 +15,7 @@ class BattleModel:
     A class to manage a battle of meals.
 
     Attributes:
-        combatants (List[Meal]): The list of meals in combatants/
+        combatants (List[Meal]): The list of meals in combatants.
 
     """
 
