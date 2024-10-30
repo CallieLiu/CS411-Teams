@@ -30,3 +30,20 @@ def sample_battle1(sample_meal1):
 @pytest.fixture
 def sample_battle2(sample_meal1, sample_meal2):
     return [sample_meal1, sample_meal2]
+
+def test_battle(battle_model, sample_battle2):
+    """Testing battling of meals"""
+
+    # Call the function to battle
+    battle_model.combatants.extend(sample_battle2)
+    winner = battle_model.battle()
+
+    # Assert that winner was returned
+    assert winner in [sample_battle2[0], sample_battle2[1]], "The winner should be one of the combatants." 
+
+def test_battle_invalid(battle_model, sample_battle1):
+    """Testing error when there are not enough combatants to start a battle (e.g., less than 2 combatants)."""
+
+    with pytest.raises(ValueError, match="Two combatants must be prepped for a battle."):
+        battle_model.combatants.extend(sample_battle1)
+        battle_model.battle()
