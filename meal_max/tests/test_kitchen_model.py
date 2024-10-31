@@ -7,6 +7,7 @@ import pytest
 from meal_max.models.kitchen_model import (
     Meal,
     create_meal,
+    clear_meals,
     delete_meal,
     get_leaderboard,
     get_meal_by_id,
@@ -27,7 +28,7 @@ def mock_cursor(mocker):
     mock_conn.cursor.return_value = mock_cursor
     mock_cursor.fetchone.return_value = None  # Default return for queries
     mock_cursor.fetchall.return_value = []
-    mock_cursor.commit.return_value = None
+    mock_conn.commit.return_value = None
 
     # Mock the get_db_connection context manager from sql_utils
     @contextmanager
@@ -88,6 +89,23 @@ def test_create_meal_invalid_difficulty():
     # Attempt to create a meal with a difficulty not in 'LOW', 'MED', or 'HIGH'
     with pytest.raises(ValueError, match="Invalid difficulty level: none. Must be 'LOW', 'MED', or 'HIGH'."):
         create_meal(meal='Fries', cuisine='American', price=1, difficulty='none')
+
+def test_clear_catalog(mock_cursor, mocker):
+    """Test clearing the entire meal catalog (removes all meal)."""
+
+    # Mock the file reading
+    mocker.patch.dict('os.environ', {'SQL_CREATE_TABLE_PATH': 'sql/create_meal_table.sql'})
+    mock_open = mocker.patch('builtins.open', mocker.mock_open(read_data="The body of the create statement"))
+
+    # Call the clear_database function
+    clear_meals()
+
+    # Ensure the file was opened using the environment variable's path
+    mock_open.assert_called_once_with('sql/create_meal_table.sql', 'r')
+
+    # Verify that the correct SQL script was executed
+    mock_cursor.executescript.assert_called_once()
+
 
 def test_delete_meal(mock_cursor):
     """Test soft deleting a meal from the catalog by meal ID."""
