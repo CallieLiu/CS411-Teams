@@ -48,11 +48,6 @@ def test_battle(battle_model, sample_battle2, mocker, mock_update_meal_stats):
     score_2 = battle_model.get_battle_score(sample_battle2[1])
     expected_winner = sample_battle2[0] if score_1 - score_2 > 0.2 else sample_battle2[1]
 
-    # Debugging output
-    print("DEBUG")
-    print("Winner:", winner)
-    print("Expected Winner:", expected_winner.meal)
-
     # Assert that the returned winner is as expected
     assert winner == expected_winner.meal, "The winner should be the expected combatant based on the scores."
 
