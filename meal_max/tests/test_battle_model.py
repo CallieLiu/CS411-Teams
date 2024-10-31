@@ -31,15 +31,30 @@ def sample_battle1(sample_meal1):
 def sample_battle2(sample_meal1, sample_meal2):
     return [sample_meal1, sample_meal2]
 
-def test_battle(battle_model, sample_battle2):
+def test_battle(battle_model, sample_battle2, mocker, mock_update_meal_stats):
     """Testing battling of meals"""
 
-    # Call the function to battle
+    # Add combatants to the battle model
     battle_model.combatants.extend(sample_battle2)
+
+    # Patch `get_random` and `update_meal_stats` using mocker
+    mocker.patch('meal_max.utils.random_utils.get_random', return_value=0.2)
+
+    # Run the battle and determine the winner
     winner = battle_model.battle()
 
-    # Assert that winner was returned
-    assert winner in [sample_battle2[0], sample_battle2[1]], "The winner should be one of the combatants." 
+    # Calculate expected winner based on scores
+    score_1 = battle_model.get_battle_score(sample_battle2[0])
+    score_2 = battle_model.get_battle_score(sample_battle2[1])
+    expected_winner = sample_battle2[0] if score_1 - score_2 > 0.2 else sample_battle2[1]
+
+    # Debugging output
+    print("DEBUG")
+    print("Winner:", winner)
+    print("Expected Winner:", expected_winner.meal)
+
+    # Assert that the returned winner is as expected
+    assert winner == expected_winner.meal, "The winner should be the expected combatant based on the scores."
 
 def test_battle_invalid(battle_model, sample_battle1):
     """Testing error when there are not enough combatants to start a battle (e.g., less than 2 combatants)."""
