@@ -87,3 +87,21 @@ battle() {
 }
 
 
+# Health checks
+check_health
+check_db
+
+# Clear the catalog
+clear_catalog
+
+#Create meals
+create_meal "Pizza" "Italian" 5 "MED"
+create_meal "Spaghetti" "Italian" 15 "MED"
+create_meal "Burger" "American" 5 "LOW"
+create_meal "Sushi" "Japanese" 10 "HIGH"
+create_meal "Fries" "American" 3 "MED"
+
+delete_meal_by_id 1
+
+battle
+
