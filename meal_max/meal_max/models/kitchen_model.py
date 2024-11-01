@@ -121,6 +121,21 @@ def delete_meal(meal_id: int) -> None:
         raise e
 
 def get_leaderboard(sort_by: str="wins") -> dict[str, Any]:
+    """
+    Use leaderboard to rank elements to evaluate a meal.
+    Args: 
+        sort_by (str) :The criteria to sort. This argument can be chosen from those two below.
+            "wins": The default value. Sort by number of wns in descending orders.
+            "win_pct": Sort by value of win percentage by descending orders.
+   
+    Raises:
+        ValueError: If argument 'sort_by' is not valid.
+        sqlite3.Error: If database returns any error.
+    
+    Returns:
+        dict[str,Any]: The dictonary containing different criteria considering evaluate a meal in descending orders.
+
+    """
     query = """
         SELECT id, meal, cuisine, price, difficulty, battles, wins, (wins * 1.0 / battles) AS win_pct
         FROM meals WHERE deleted = false AND battles > 0
@@ -162,6 +177,23 @@ def get_leaderboard(sort_by: str="wins") -> dict[str, Any]:
         raise e
 
 def get_meal_by_id(meal_id: int) -> Meal:
+    """
+        Retrieve the meal from database by its ID.
+
+        Args:
+            mean_id (int) : The number of the meal to retrieve.
+        
+        Returns:
+            Meal: All information about the meal.
+
+        Raises:
+            Value Error:
+                If meal_id has been deleted in the database, or meal_id is not found.
+            
+            sqlite3.Error:
+                If database returns any error.
+
+    """
     try:
         with get_db_connection() as conn:
             cursor = conn.cursor()
