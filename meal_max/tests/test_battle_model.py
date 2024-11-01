@@ -38,7 +38,7 @@ def test_battle(battle_model, sample_battle2, mocker, mock_update_meal_stats):
     battle_model.combatants.extend(sample_battle2)
 
     # Patch `get_random` and `update_meal_stats` using mocker
-    mocker.patch('meal_max.utils.random_utils.get_random', return_value=0.2)
+    mocker.patch('meal_max.models.battle_model.get_random', return_value=0.2)
 
     # Run the battle and determine the winner
     winner = battle_model.battle()
