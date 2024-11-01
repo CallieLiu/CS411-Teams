@@ -85,10 +85,22 @@ class BattleModel:
         return winner.meal
 
     def clear_combatants(self):
+        """
+        Clear the combatants lists.
+        """
         logger.info("Clearing the combatants list.")
         self.combatants.clear()
 
     def get_battle_score(self, combatant: Meal) -> float:
+        """
+        Calculate the battle score.
+
+        Args:
+            combatant (Meal): The combatant to be calculated.
+       
+        Returns: 
+            The combatent score.
+        """
         difficulty_modifier = {"HIGH": 1, "MED": 2, "LOW": 3}
 
         # Log the calculation process
