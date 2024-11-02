@@ -215,6 +215,19 @@ def get_meal_by_id(meal_id: int) -> Meal:
 
 
 def get_meal_by_name(meal_name: str) -> Meal:
+    """
+    Retrieve a meal from the database by its name.
+
+    Args:
+        meal_name (str): The name of the meal to retrieve.
+
+    Returns:
+        Meal: An instance of the Meal class containing all information about the meal.
+
+    Raises:
+        ValueError: If the meal with the specified name has been deleted or does not exist.
+        sqlite3.Error: If any database error occurs.
+    """
     try:
         with get_db_connection() as conn:
             cursor = conn.cursor()
@@ -236,6 +249,17 @@ def get_meal_by_name(meal_name: str) -> Meal:
 
 
 def update_meal_stats(meal_id: int, result: str) -> None:
+    """
+    Update the statistics of a meal in the database based on the result of a battle.
+
+    Args:
+        meal_id (int): The ID of the meal to update.
+        result (str): The result of the battle, either 'win' or 'loss'.
+
+    Raises:
+        ValueError: If the meal with the specified ID has been deleted, does not exist, or if the result is invalid.
+        sqlite3.Error: If any database error occurs.
+    """
     try:
         with get_db_connection() as conn:
             cursor = conn.cursor()

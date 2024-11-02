@@ -116,10 +116,25 @@ class BattleModel:
         return score
 
     def get_combatants(self) -> List[Meal]:
+        """
+        Get the current list of combatants.
+
+        Returns:
+            List[Meal]: A list of Meal objects currently in the combatants.
+        """
         logger.info("Retrieving current list of combatants.")
         return self.combatants
 
     def prep_combatant(self, combatant_data: Meal):
+        """
+        Prepare a new combatant by adding it to the combatants list.
+
+        Args:
+            combatant_data(Meal): The Meal object representing the combatant to be added.
+
+        Raises:
+            ValueError: If the combatants list already contains two or more combatants.    
+        """
         if len(self.combatants) >= 2:
             logger.error("Attempted to add combatant '%s' but combatants list is full", combatant_data.meal)
             raise ValueError("Combatant list is full, cannot add more combatants.")
