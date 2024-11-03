@@ -157,3 +157,20 @@ def test_delete_meal_already_deleted(mock_cursor):
     # Expect a ValueError when attempting to delete a song that's already been deleted
     with pytest.raises(ValueError, match="Meal with ID 1 has been deleted"):
         delete_meal(1)
+
+def test_get_leaderboard(mock_cursor):
+    mock_cursor.fetchall.return_value=[] # set return value of unitest
+    get_leaderboard('wins') # call the function for testing
+    expect_select_args=normalize_whitespace('SELECT id, meal, cuisine, price, difficulty, battles, wins, (wins * 1.0 / battles) AS win_pct FROM meals WHERE deleted = false AND battles > 0 ORDER BY wins DESC')
+    actual_select_args=mock_cursor.execute.call_args_list[0][0]
+    assert expect_select_args==actual_select_args, f'expected select args is {expect_select_args}, but got {actual_select_args}'
+
+def test_get_meal_by_id(mock_cursor):
+    mock_cursor.fetchone.return_value = None
+    get_meal_by_id(5)
+    expect_select_args=normalize_whitespace("SELECT id, meal, cuisine, price, difficulty, deleted FROM meals WHERE id = ?")
+    expect_select_args_1=(5,)
+    actual_select_args_1=mock_cursor.execute.call_args_list[0][1]
+    actual_select_args=mock_cursor.execute.call_args_list[0][0]
+    assert expect_select_args==actual_select_args, f'expected select args is {expect_select_args}, but got {actual_select_args}'
+    assert expect_select_args_1==actual_select_args_1, f'expected select args is {expect_select_args_1}, but got {actual_select_args_1}'

@@ -57,3 +57,13 @@ def test_battle_invalid(battle_model, sample_battle1):
     with pytest.raises(ValueError, match="Two combatants must be prepped for a battle."):
         battle_model.combatants.extend(sample_battle1)
         battle_model.battle()
+
+def test_clear_combatants(battle_model,sample_meal1):
+    battle_model.prep_combatant(sample_meal1)
+    battle_model.clear_combatants()
+    assert len(battle_model.combatants)==0
+
+def test_get_battle_score(battle_model,sample_meal1):
+    battle_model.clear_combatants()
+    assert battle_model.get_battle_score(sample_meal1)==103
+    
