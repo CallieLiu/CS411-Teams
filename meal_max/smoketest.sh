@@ -86,7 +86,40 @@ battle() {
     fi
 }
 
+clear_combatants(){
+  echo "Clearing combatants..."
+  response=$(curl -s -X POST "$BASE_URL/clear-combatants")
+  if echo "$response" | grep -q '"status": "success"'; then
+        echo "Combatant clear successfully."
+    else
+        echo "Failed to clear combatants."
+        exit 1
+    fi
+}
 
+get_leaderboard(){
+  echo "Getting leaderboard"
+  sort_by =$1
+  response=$(curl -s -X GET "$BASE_URL/leaderboard?sort=$sort_by")
+  if echo "$response" | grep -q '"status": "success"'; then
+        echo "Get leaderboard successfully."
+    else
+        echo "Failed to get leaderboard."
+        exit 1
+    fi
+}
+
+get_meal_by_id(){
+  echo "Getting meal by id"
+  meal_id=$1
+  response=$(curl -s -X GET "$BASE_URL/get-meal-by-id/$meal_id")
+  if echo "$response" | grep -q '"status": "success"'; then
+        echo "Get meal by id successfully."
+    else
+        echo "Failed to get meal by id."
+        exit 1
+    fi
+}
 # Health checks
 check_health
 check_db
@@ -105,3 +138,6 @@ delete_meal_by_id 1
 
 battle
 
+clear_combatants
+get_leaderboard "wins"
+get_meal_by_id 2
