@@ -41,7 +41,7 @@ check_db() {
 
 clear_catalog() {
   echo "Clearing the meals..."
-  curl -s -X DELETE "$BASE_URL/clear-catalog" | grep -q '"status": "success"'
+  curl -s -X DELETE "$BASE_URL/clear-meals" | grep -q '"status": "success"'
 }
 
 create_meal() {
