@@ -66,4 +66,23 @@ def test_clear_combatants(battle_model,sample_meal1):
 def test_get_battle_score(battle_model,sample_meal1):
     battle_model.clear_combatants()
     assert battle_model.get_battle_score(sample_meal1)==103
+
+def test_get_combatants(battle_model, sample_meal1):
+    """Testing retrieval of combatants."""
+    battle_model.prep_combatant(sample_meal1)
+    combatants = battle_model.get_combatants()
+    assert combatants == [sample_meal1], "Should return the list of combatants."
+
+def test_prep_combatant_success(battle_model, sample_meal1):
+    """Testing successful preparation of a combatant."""
+    battle_model.prep_combatant(sample_meal1)
+    assert len(battle_model.combatants) == 1, "Should have 1 combatant after preparation."
+
+def test_prep_combatant_full(battle_model, sample_meal1, sample_meal2):
+    """Testing error when trying to add a third combatant."""
+    battle_model.prep_combatant(sample_meal1)
+    battle_model.prep_combatant(sample_meal2)
+    
+    with pytest.raises(ValueError, match="Combatant list is full, cannot add more combatants."):
+        battle_model.prep_combatant(Meal(3, 'Tacos', 'Mexican', 10, 'MED'))
     
