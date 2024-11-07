@@ -99,7 +99,7 @@ clear_combatants(){
 
 get_leaderboard(){
   echo "Getting leaderboard"
-  sort_by =$1
+  sort_by=$1
   response=$(curl -s -X GET "$BASE_URL/leaderboard?sort=$sort_by")
   if echo "$response" | grep -q '"status": "success"'; then
         echo "Get leaderboard successfully."
