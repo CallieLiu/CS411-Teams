@@ -193,38 +193,29 @@ def test_get_meal_by_id(mock_cursor,sample_meal1):
     assert expect_select_args==actual_select_args, f'expected select args is {expect_select_args}, but got {actual_select_args}'
     assert expect_select_args_1==actual_select_args_1, f'expected select args is {expect_select_args_1}, but got {actual_select_args_1}'
 
-def test_get_meal_by_name_existing(mocker):
-    # Mock database connection and cursor
-    mock_conn = mocker.patch('your_module_name.get_db_connection')
-    mock_cursor = mock_conn.return_value.__enter__.return_value.cursor.return_value
+def test_get_meal_by_name_existing(mock_cursor):
     # Define what the cursor should return for an existing meal
-    mock_cursor.fetchone.return_value = (1, "Taco", "Mexican", 15, "Medium", 0)
+    mock_cursor.fetchone.return_value = (1, "Taco", "Mexican", 15, "MED", 0)
 
     meal = get_meal_by_name("Taco")
     assert meal.meal == "Taco"
     assert meal.cuisine == "Mexican"
 
-def test_get_meal_by_name_deleted(mocker):
-    mock_conn = mocker.patch('your_module_name.get_db_connection')
-    mock_cursor = mock_conn.return_value.__enter__.return_value.cursor.return_value
+def test_get_meal_by_name_deleted(mock_cursor):
     # Simulate deleted meal
     mock_cursor.fetchone.return_value = (1, "Taco", "Mexican", 15, "Medium", 1)
 
     with pytest.raises(ValueError, match="Meal with name Taco has been deleted"):
         get_meal_by_name("Taco")
 
-def test_get_meal_by_name_not_found(mocker):
-    mock_conn = mocker.patch('your_module_name.get_db_connection')
-    mock_cursor = mock_conn.return_value.__enter__.return_value.cursor.return_value
+def test_get_meal_by_name_not_found(mock_cursor):
     # Simulate meal not found
     mock_cursor.fetchone.return_value = None
 
     with pytest.raises(ValueError, match="Meal with name Taco not found"):
         get_meal_by_name("Taco")
 
-def test_get_meal_by_name_db_error(mocker):
-    mock_conn = mocker.patch('your_module_name.get_db_connection')
-    mock_cursor = mock_conn.return_value.__enter__.return_value.cursor.return_value
+def test_get_meal_by_name_db_error(mock_cursor):
     # Simulate database error
     mock_cursor.execute.side_effect = sqlite3.Error("DB error")
 
@@ -232,54 +223,42 @@ def test_get_meal_by_name_db_error(mocker):
         get_meal_by_name("Taco")
 
 
-def test_update_meal_stats_win(mocker):
-    mock_conn = mocker.patch('your_module_name.get_db_connection')
-    mock_cursor = mock_conn.return_value.__enter__.return_value.cursor.return_value
+def test_update_meal_stats_win(mock_cursor):
     # Simulate meal exists and is not deleted
     mock_cursor.fetchone.return_value = (0,)
 
     update_meal_stats(1, "win")
     mock_cursor.execute.assert_any_call("UPDATE meals SET battles = battles + 1, wins = wins + 1 WHERE id = ?", (1,))
 
-def test_update_meal_stats_loss(mocker):
-    mock_conn = mocker.patch('your_module_name.get_db_connection')
-    mock_cursor = mock_conn.return_value.__enter__.return_value.cursor.return_value
+def test_update_meal_stats_loss(mock_cursor):
     # Simulate meal exists and is not deleted
     mock_cursor.fetchone.return_value = (0,)
 
     update_meal_stats(1, "loss")
     mock_cursor.execute.assert_any_call("UPDATE meals SET battles = battles + 1 WHERE id = ?", (1,))
 
-def test_update_meal_stats_deleted(mocker):
-    mock_conn = mocker.patch('your_module_name.get_db_connection')
-    mock_cursor = mock_conn.return_value.__enter__.return_value.cursor.return_value
+def test_update_meal_stats_deleted(mock_cursor):
     # Simulate meal is deleted
     mock_cursor.fetchone.return_value = (1,)
 
     with pytest.raises(ValueError, match="Meal with ID 1 has been deleted"):
         update_meal_stats(1, "win")
 
-def test_update_meal_stats_not_found(mocker):
-    mock_conn = mocker.patch('your_module_name.get_db_connection')
-    mock_cursor = mock_conn.return_value.__enter__.return_value.cursor.return_value
+def test_update_meal_stats_not_found(mock_cursor):
     # Simulate meal not found
     mock_cursor.fetchone.return_value = None
 
     with pytest.raises(ValueError, match="Meal with ID 1 not found"):
         update_meal_stats(1, "win")
 
-def test_update_meal_stats_invalid_result(mocker):
-    mock_conn = mocker.patch('your_module_name.get_db_connection')
-    mock_cursor = mock_conn.return_value.__enter__.return_value.cursor.return_value
+def test_update_meal_stats_invalid_result(mock_cursor):
     # Simulate meal exists and is not deleted
     mock_cursor.fetchone.return_value = (0,)
 
     with pytest.raises(ValueError, match="Invalid result: draw. Expected 'win' or 'loss'"):
         update_meal_stats(1, "draw")
 
-def test_update_meal_stats_db_error(mocker):
-    mock_conn = mocker.patch('your_module_name.get_db_connection')
-    mock_cursor = mock_conn.return_value.__enter__.return_value.cursor.return_value
+def test_update_meal_stats_db_error(mock_cursor):
     # Simulate database error
     mock_cursor.execute.side_effect = sqlite3.Error("DB error")
 
