@@ -120,6 +120,86 @@ get_meal_by_id(){
         exit 1
     fi
 }
+
+
+
+prep_combatant() {
+  meal=$1
+  cuisine=$2
+  price=$3
+  difficulty=$4
+
+
+  echo "Preparing combatant ($meal, $cuisine, $price, $difficulty)"
+  response=$(curl -s -X POST "$BASE_URL/prep-combatant" -H "Content-Type: application/json" \
+    -d "{\"meal\":\"$meal\", \"cuisine\":\"$cuisine\", \"price\":$price, \"difficulty\":\"$difficulty\"}")
+
+
+  if echo "$response" | grep -q '"status": "success"'; then
+    echo "Combatant prepared successfully."
+  else
+    echo "Failed to prepare combatant."
+    exit 1
+  fi
+}
+
+
+get_combatants() {
+  echo "Getting current list of combatants"
+  response=$(curl -s -X GET "$BASE_URL/get-combatants")
+
+
+  if echo "$response" | grep -q '"status": "success"'; then
+    echo "Combatants list retrieved successfully."
+    if [ "$ECHO_JSON" = true ]; then
+      echo "$response" | jq
+    fi
+  else
+    echo "Failed to retrieve combatants list."
+    exit 1
+  fi
+}
+
+
+get_meal_by_name(){
+  meal_name=$1
+  echo "Retrieving meal by name ($meal_name)..."
+  response=$(curl -s -X GET "$BASE_URL/get-meal-by-name/$meal_name")
+
+
+  if echo "$response" | grep -q '"status": "success"'; then
+    echo "Meal retrieved by name."
+    if [ "$ECHO_JSON" = true ]; then
+      echo "Song JSON:"
+      echo "$response" | jq .
+    fi
+  else
+    echo "Failed to retrieve meal by name."
+    exit 1
+  fi
+}
+
+
+update_meal_stats() {
+  meal_id=$1
+  result=$2
+
+
+  echo "Updating meal stats"
+  response=$(curl -s -X POST "$BASE_URL/update-meal-stats" -H "Content-Type: application/json" \
+    -d "{\"meal_id\":$meal_id, \"result\":\"$result\"}")
+
+
+  if echo "$response" | grep -q '"status": "success"'; then
+    echo "Successfully updated meal stats for meal ID: $meal_id with result: $result"
+  else
+    echo "Failed to update meal stats for meal ID: $meal_id with result: $result"
+    echo "Response: $response"
+    exit 1
+  fi
+}
+
+
 # Health checks
 check_health
 check_db
@@ -141,3 +221,13 @@ battle
 clear_combatants
 get_leaderboard "wins"
 get_meal_by_id 2
+
+prep_combatant "Pizza" "Italian" 5 "MED"
+prep_combatant "Burger" "American" 5 "LOW"
+prep_combatant "Sushi" "Japanese" 10 "HIGH"
+
+get_combatants
+
+get_meal_by_name "Pizza"
+
+update_meal_stats 2 "success"
